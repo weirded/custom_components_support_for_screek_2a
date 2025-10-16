@@ -66,8 +66,7 @@ void ESP8266UartComponent::setup() {
       (rx_pin_ == nullptr || rx_pin_->get_pin() == 3)
 #ifdef USE_LOGGER
       // we will use UART0 if logger isn't using it in swapped mode
-      && (logger::global_logger->get_hw_serial() == nullptr ||
-          logger::global_logger->get_uart() != logger::UART_SELECTION_UART0_SWAP)
+      && (logger::global_logger->get_uart() != logger::UART_SELECTION_UART0_SWAP)
 #endif
   ) {
     this->hw_serial_ = &Serial;
@@ -78,8 +77,7 @@ void ESP8266UartComponent::setup() {
              (rx_pin_ == nullptr || rx_pin_->get_pin() == 13)
 #ifdef USE_LOGGER
              // we will use UART0 swapped if logger isn't using it in regular mode
-             && (logger::global_logger->get_hw_serial() == nullptr ||
-                 logger::global_logger->get_uart() != logger::UART_SELECTION_UART0)
+             && (logger::global_logger->get_uart() != logger::UART_SELECTION_UART0)
 #endif
   ) {
     this->hw_serial_ = &Serial;
@@ -118,16 +116,8 @@ void ESP8266UartComponent::dump_config() {
 }
 
 void ESP8266UartComponent::check_logger_conflict() {
-#ifdef USE_LOGGER
-  if (this->hw_serial_ == nullptr || logger::global_logger->get_baud_rate() == 0) {
-    return;
-  }
-
-  if (this->hw_serial_ == logger::global_logger->get_hw_serial()) {
-    ESP_LOGW(TAG, "  You're using the same serial port for logging and the UART component. Please "
-                  "disable logging over the serial port by setting logger->baud_rate to 0.");
-  }
-#endif
+  // Logger conflict checking removed in ESPHome 2025.10+
+  // The logger API no longer exposes get_hw_serial() method
 }
 
 void ESP8266UartComponent::write_array(const uint8_t *data, size_t len) {
